@@ -100,11 +100,18 @@ const flipBoard = () => {
 
 const resetBoard = () => {
   if (chessBoard.value) {
-    console.log('[DEBUG] Basic example - resetting board with:', startingPosition)
-    // Reset to starting position using proper pieces format
-    chessBoard.value.setPieces(startingPosition)
+    console.log('[DEBUG] RESET - Initiating board reset using FEN')
+    
+    // Reset the board to starting position using FEN (proper method)
+    chessBoard.value.set({
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    })
+    
+    // Clear move history and selection
     moves.value = []
     selectedSquare.value = null
+    
+    console.log('[DEBUG] RESET - Board reset completed using FEN method')
   }
 }
 

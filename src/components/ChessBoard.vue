@@ -29,34 +29,188 @@ const boardElement = ref<HTMLElement>()
 // State for click-to-move functionality
 const selectedSquare = ref<Key | null>(null)
 
-// Helper function to generate basic destinations for standard chess moves
+// Helper function to generate comprehensive destinations for all chess pieces
 const getBasicDests = () => {
   const dests = new Map()
   
-  // Basic pawn moves for starting position
+  console.log('[DEBUG] MOVE_VALIDATION - Generating comprehensive destinations')
+  
+  // Helper function to check if square is valid
+  const isValidSquare = (file: number, rank: number) => {
+    return file >= 0 && file < 8 && rank >= 1 && rank <= 8
+  }
+  
+  // Helper function to convert file/rank to square notation
+  const toSquare = (file: number, rank: number) => {
+    return String.fromCharCode(97 + file) + rank
+  }
+  
+  // Pawn moves (starting position)
   // White pawns
   for (let file = 0; file < 8; file++) {
-    const square = String.fromCharCode(97 + file) + '2'
-    const oneStep = String.fromCharCode(97 + file) + '3'
-    const twoStep = String.fromCharCode(97 + file) + '4'
-    dests.set(square, [oneStep, twoStep])
+    const square = toSquare(file, 2)
+    const moves = [toSquare(file, 3), toSquare(file, 4)]
+    dests.set(square, moves)
   }
   
   // Black pawns
   for (let file = 0; file < 8; file++) {
-    const square = String.fromCharCode(97 + file) + '7'
-    const oneStep = String.fromCharCode(97 + file) + '6'
-    const twoStep = String.fromCharCode(97 + file) + '5'
-    dests.set(square, [oneStep, twoStep])
+    const square = toSquare(file, 7)
+    const moves = [toSquare(file, 6), toSquare(file, 5)]
+    dests.set(square, moves)
   }
   
-  // Basic knight moves from starting positions
-  dests.set('b1', ['a3', 'c3'])
-  dests.set('g1', ['f3', 'h3'])
-  dests.set('b8', ['a6', 'c6'])
-  dests.set('g8', ['f6', 'h6'])
+  // Knight moves (all possible L-shaped moves)
+  const knightMoves = [
+    [-2, -1], [-2, 1], [-1, -2], [-1, 2],
+    [1, -2], [1, 2], [2, -1], [2, 1]
+  ]
   
-  console.log('[DEBUG] Generated basic dests:', dests)
+  // White knights
+  const whiteKnights = [[1, 1], [6, 1]] // b1, g1
+  whiteKnights.forEach(([file, rank]) => {
+    const square = toSquare(file, rank)
+    const moves: string[] = []
+    knightMoves.forEach(([df, dr]) => {
+      const newFile = file + df
+      const newRank = rank + dr
+      if (isValidSquare(newFile, newRank)) {
+        moves.push(toSquare(newFile, newRank))
+      }
+    })
+    dests.set(square, moves)
+  })
+  
+  // Black knights
+  const blackKnights = [[1, 8], [6, 8]] // b8, g8
+  blackKnights.forEach(([file, rank]) => {
+    const square = toSquare(file, rank)
+    const moves: string[] = []
+    knightMoves.forEach(([df, dr]) => {
+      const newFile = file + df
+      const newRank = rank + dr
+      if (isValidSquare(newFile, newRank)) {
+        moves.push(toSquare(newFile, newRank))
+      }
+    })
+    dests.set(square, moves)
+  })
+  
+  // Rook moves (horizontal and vertical)
+  const rookPositions = [
+    [0, 1], [7, 1], // a1, h1 (white)
+    [0, 8], [7, 8]  // a8, h8 (black)
+  ]
+  
+  rookPositions.forEach(([file, rank]) => {
+    const square = toSquare(file, rank)
+    const moves: string[] = []
+    
+    // Horizontal moves
+    for (let f = 0; f < 8; f++) {
+      if (f !== file) moves.push(toSquare(f, rank))
+    }
+    
+    // Vertical moves
+    for (let r = 1; r <= 8; r++) {
+      if (r !== rank) moves.push(toSquare(file, r))
+    }
+    
+    dests.set(square, moves)
+  })
+  
+  // Bishop moves (diagonal)
+  const bishopPositions = [
+    [2, 1], [5, 1], // c1, f1 (white)
+    [2, 8], [5, 8]  // c8, f8 (black)
+  ]
+  
+  bishopPositions.forEach(([file, rank]) => {
+    const square = toSquare(file, rank)
+    const moves: string[] = []
+    
+    // Diagonal moves in all 4 directions
+    const directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+    directions.forEach(([df, dr]) => {
+      for (let i = 1; i < 8; i++) {
+        const newFile = file + (df * i)
+        const newRank = rank + (dr * i)
+        if (isValidSquare(newFile, newRank)) {
+          moves.push(toSquare(newFile, newRank))
+        } else {
+          break
+        }
+      }
+    })
+    
+    dests.set(square, moves)
+  })
+  
+  // Queen moves (combination of rook and bishop)
+  const queenPositions = [
+    [3, 1], // d1 (white)
+    [3, 8]  // d8 (black)
+  ]
+  
+  queenPositions.forEach(([file, rank]) => {
+    const square = toSquare(file, rank)
+    const moves: string[] = []
+    
+    // Horizontal and vertical (like rook)
+    for (let f = 0; f < 8; f++) {
+      if (f !== file) moves.push(toSquare(f, rank))
+    }
+    for (let r = 1; r <= 8; r++) {
+      if (r !== rank) moves.push(toSquare(file, r))
+    }
+    
+    // Diagonal (like bishop)
+    const directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+    directions.forEach(([df, dr]) => {
+      for (let i = 1; i < 8; i++) {
+        const newFile = file + (df * i)
+        const newRank = rank + (dr * i)
+        if (isValidSquare(newFile, newRank)) {
+          moves.push(toSquare(newFile, newRank))
+        } else {
+          break
+        }
+      }
+    })
+    
+    dests.set(square, moves)
+  })
+  
+  // King moves (one square in any direction)
+  const kingPositions = [
+    [4, 1], // e1 (white)
+    [4, 8]  // e8 (black)
+  ]
+  
+  kingPositions.forEach(([file, rank]) => {
+    const square = toSquare(file, rank)
+    const moves: string[] = []
+    
+    const directions = [
+      [-1, -1], [-1, 0], [-1, 1],
+      [0, -1],           [0, 1],
+      [1, -1],  [1, 0],  [1, 1]
+    ]
+    
+    directions.forEach(([df, dr]) => {
+      const newFile = file + df
+      const newRank = rank + dr
+      if (isValidSquare(newFile, newRank)) {
+        moves.push(toSquare(newFile, newRank))
+      }
+    })
+    
+    dests.set(square, moves)
+  })
+  
+  console.log('[DEBUG] MOVE_VALIDATION - Comprehensive destinations generated:', dests.size, 'pieces can move')
+  console.log('[DEBUG] MOVE_VALIDATION - All piece types supported: pawns, knights, rooks, bishops, queens, kings')
+  
   return dests
 }
 

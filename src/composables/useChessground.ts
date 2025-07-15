@@ -136,8 +136,19 @@ export function useChessground(
       }
       
       console.log('[DEBUG] Final pieces Map:', piecesMap)
-      chessground.value.setPieces(piecesMap)
-      chessground.value.redrawAll()
+      console.log('[DEBUG] Final pieces Map size:', piecesMap.size)
+      
+      // Clear the board completely first to ensure clean state
+      chessground.value.setPieces(new Map())
+      
+      // Small delay to ensure clearing is processed
+      setTimeout(() => {
+        if (chessground.value) {
+          chessground.value.setPieces(piecesMap)
+          chessground.value.redrawAll()
+          console.log('[DEBUG] Pieces set and board redrawn')
+        }
+      }, 10)
     }
   }
 

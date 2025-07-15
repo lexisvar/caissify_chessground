@@ -207,9 +207,21 @@ const onBoardChange = () => {
 // Control methods
 const resetBasicBoard = () => {
   if (basicBoard.value) {
-    basicBoard.value.set({
-      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-    })
+    console.log('[DEBUG] COMPREHENSIVE - Resetting basic board')
+    
+    // Clear the board first, then set the starting position
+    basicBoard.value.setPieces(new Map())
+    
+    // Small delay to ensure clearing is processed
+    setTimeout(() => {
+      if (basicBoard.value) {
+        basicBoard.value.set({
+          fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+        })
+        console.log('[DEBUG] COMPREHENSIVE - Basic board reset completed')
+      }
+    }, 50)
+    
     basicLastMove.value = ''
     basicSelected.value = null
   }
