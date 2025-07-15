@@ -65,7 +65,6 @@ export function useChessground(
 
   // Helper function to convert FEN to pieces format
   const fenToPieces = (fen: string) => {
-    console.log('[DEBUG] Converting FEN to pieces:', fen)
     const pieces = new Map()
     const rows = fen.split(' ')[0].split('/')
     
@@ -87,8 +86,6 @@ export function useChessground(
         }
       }
     }
-    console.log('[DEBUG] Converted pieces Map:', pieces)
-    console.log('[DEBUG] Pieces Map size:', pieces.size)
     return pieces
   }
 
@@ -100,15 +97,29 @@ export function useChessground(
         const pieces = fenToPieces((newConfig as any).fen)
         const configWithoutFen = { ...newConfig }
         delete (configWithoutFen as any).fen
-        // Clear the board first, then set pieces to avoid duplicates
-        chessground.value.set({ ...configWithoutFen, fen: undefined })
-        chessground.value.setPieces(new Map()) // Clear all pieces first
+        
+        // Clear all state completely
+        chessground.value.setPieces(new Map())
+        chessground.value.cancelMove()
+        chessground.value.selectSquare(null)
+        
+        // Apply configuration without FEN, ensuring clean state
+        chessground.value.set({
+          ...configWithoutFen,
+          lastMove: undefined,
+          selected: undefined,
+          check: undefined
+        })
+        
+        // Set the new pieces and force redraw
         chessground.value.setPieces(pieces)
+        chessground.value.redrawAll()
+        
+        console.log('[DEBUG] FEN processed and board updated with clean state')
       } else {
         chessground.value.set(newConfig)
       }
     }
-    // Don't mutate the reactive config - let the watcher handle updates
   }
 
   const toggleOrientation = () => {
@@ -119,14 +130,9 @@ export function useChessground(
 
   const setPieces = (pieces: any) => {
     if (chessground.value) {
-      console.log('[DEBUG] setPieces called with:', pieces)
-      console.log('[DEBUG] pieces type:', typeof pieces)
-      console.log('[DEBUG] pieces instanceof Map:', pieces instanceof Map)
-      
       // Convert pieces format if needed
       let piecesMap = pieces
       if (!(pieces instanceof Map)) {
-        console.log('[DEBUG] Converting object to Map')
         piecesMap = new Map()
         if (pieces && typeof pieces === 'object') {
           Object.entries(pieces).forEach(([key, value]) => {
@@ -135,20 +141,9 @@ export function useChessground(
         }
       }
       
-      console.log('[DEBUG] Final pieces Map:', piecesMap)
-      console.log('[DEBUG] Final pieces Map size:', piecesMap.size)
-      
-      // Clear the board completely first to ensure clean state
-      chessground.value.setPieces(new Map())
-      
-      // Small delay to ensure clearing is processed
-      setTimeout(() => {
-        if (chessground.value) {
-          chessground.value.setPieces(piecesMap)
-          chessground.value.redrawAll()
-          console.log('[DEBUG] Pieces set and board redrawn')
-        }
-      }, 10)
+      // Set pieces directly and force redraw
+      chessground.value.setPieces(piecesMap)
+      chessground.value.redrawAll()
     }
   }
 

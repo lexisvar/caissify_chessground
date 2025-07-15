@@ -209,21 +209,18 @@ const resetBasicBoard = () => {
   if (basicBoard.value) {
     console.log('[DEBUG] COMPREHENSIVE - Resetting basic board')
     
-    // Clear the board first, then set the starting position
-    basicBoard.value.setPieces(new Map())
-    
-    // Small delay to ensure clearing is processed
-    setTimeout(() => {
-      if (basicBoard.value) {
-        basicBoard.value.set({
-          fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-        })
-        console.log('[DEBUG] COMPREHENSIVE - Basic board reset completed')
-      }
-    }, 50)
-    
+    // Reset state first
     basicLastMove.value = ''
     basicSelected.value = null
+    
+    // Use set() method with FEN - it handles clearing internally
+    basicBoard.value.set({
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      lastMove: undefined,
+      selected: undefined
+    })
+    
+    console.log('[DEBUG] COMPREHENSIVE - Basic board reset completed')
   }
 }
 
@@ -235,18 +232,25 @@ const flipBasicBoard = () => {
 
 const resetFreeBoard = () => {
   if (freeBoard.value) {
-    freeBoard.value.set({
-      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-    })
+    // Reset move history first
     freeMoves.value = []
+    
+    // Use set() method with FEN for consistent behavior
+    freeBoard.value.set({
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      lastMove: undefined
+    })
+    
+    console.log('[DEBUG] COMPREHENSIVE - Free board reset completed')
   }
 }
 
 const clearFreeBoard = () => {
   if (freeBoard.value) {
-    freeBoard.value.set({
-      fen: '8/8/8/8/8/8/8/8 w - - 0 1'
-    })
+    // Clear all pieces and force redraw
+    freeBoard.value.setPieces(new Map())
+    freeBoard.value.redrawAll()
+    console.log('[DEBUG] COMPREHENSIVE - Free board cleared')
   }
 }
 
