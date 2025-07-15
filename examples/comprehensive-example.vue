@@ -1121,7 +1121,7 @@ h1 {
   font-weight: 600;
 }
 
-/* Fixed size containers for demonstration */
+Fixed size containers for demonstration
 .size-350 {
   width: 350px !important;
   height: 350px !important;
