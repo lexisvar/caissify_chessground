@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useChessground } from '@/composables/useChessground'
-import type { ChessBoardProps, ChessBoardEmits, Config } from '@/types/chessground'
+import type { ChessBoardProps, ChessBoardEmits, Config, Key } from '@/types/chessground'
 
 // Props
 const props = withDefaults(defineProps<ChessBoardProps>(), {
@@ -26,6 +26,40 @@ const emit = defineEmits<ChessBoardEmits>()
 // Template refs
 const boardElement = ref<HTMLElement>()
 
+// State for click-to-move functionality
+const selectedSquare = ref<Key | null>(null)
+
+// Helper function to generate basic destinations for standard chess moves
+const getBasicDests = () => {
+  const dests = new Map()
+  
+  // Basic pawn moves for starting position
+  // White pawns
+  for (let file = 0; file < 8; file++) {
+    const square = String.fromCharCode(97 + file) + '2'
+    const oneStep = String.fromCharCode(97 + file) + '3'
+    const twoStep = String.fromCharCode(97 + file) + '4'
+    dests.set(square, [oneStep, twoStep])
+  }
+  
+  // Black pawns
+  for (let file = 0; file < 8; file++) {
+    const square = String.fromCharCode(97 + file) + '7'
+    const oneStep = String.fromCharCode(97 + file) + '6'
+    const twoStep = String.fromCharCode(97 + file) + '5'
+    dests.set(square, [oneStep, twoStep])
+  }
+  
+  // Basic knight moves from starting positions
+  dests.set('b1', ['a3', 'c3'])
+  dests.set('g1', ['f3', 'h3'])
+  dests.set('b8', ['a6', 'c6'])
+  dests.set('g8', ['f6', 'h6'])
+  
+  console.log('[DEBUG] Generated basic dests:', dests)
+  return dests
+}
+
 // Build chessground configuration from props
 const chessgroundConfig = computed<Config>(() => {
   const config: Config = {
@@ -37,9 +71,25 @@ const chessgroundConfig = computed<Config>(() => {
     autoCastle: props.autoCastle,
     viewOnly: props.viewOnly,
     disableContextMenu: props.disableContextMenu,
-    movable: props.movable || {
-      free: false,
-      rookCastle: true
+    movable: {
+      free: props.movable?.free || false,
+      color: props.movable?.color || 'white',
+      rookCastle: props.movable?.rookCastle !== false,
+      showDests: props.movable?.showDests !== false,
+      // Add basic destinations for all pieces if not in free mode
+      dests: props.movable?.free ? undefined : getBasicDests(),
+      events: {
+        after: (orig, dest, metadata) => {
+          console.log('[DEBUG] Move event fired:', { orig, dest, metadata })
+          // This ensures the move is properly committed
+          props.onMove?.(orig, dest, metadata.captured)
+          emit('move', orig, dest, metadata.captured)
+        }
+      }
+    },
+    draggable: {
+      enabled: true,
+      showGhost: true
     },
     premovable: props.premovable || {
       enabled: true
@@ -56,39 +106,45 @@ const chessgroundConfig = computed<Config>(() => {
       enabled: false,
       visible: true
     },
-    selectable: props.selectable || {
-      enabled: true
+    selectable: {
+      enabled: !props.viewOnly && (props.selectable?.enabled !== false)
     },
     events: {
-      move: (orig, dest, capturedPiece) => {
-        props.onMove?.(orig, dest, capturedPiece)
-        emit('move', orig, dest, capturedPiece)
-      },
-      dropNewPiece: (piece, key) => {
-        props.onDropNewPiece?.(piece, key)
-        emit('dropNewPiece', piece, key)
-      },
       select: (key) => {
+        console.log('[DEBUG] Select event fired:', key)
+        
+        // Implement click-to-move logic
+        if (selectedSquare.value && selectedSquare.value !== key) {
+          // Check if this is a valid move
+          const dests = chessgroundConfig.value.movable?.dests
+          const validMoves = dests?.get(selectedSquare.value as Key)
+          
+          if (validMoves && validMoves.includes(key)) {
+            console.log('[DEBUG] Executing move:', selectedSquare.value, '→', key)
+            // Execute the move programmatically
+            if (chessground.value) {
+              chessground.value.move(selectedSquare.value as Key, key)
+            }
+            selectedSquare.value = null
+            return
+          }
+        }
+        
+        selectedSquare.value = key
         props.onSelect?.(key)
         emit('select', key)
       },
       insert: (elements) => {
+        console.log('[DEBUG] Insert event fired:', elements)
         props.onInsert?.(elements)
         emit('insert', elements)
       },
       change: () => {
+        console.log('[DEBUG] Change event fired')
         props.onChange?.()
         emit('change')
       }
     }
-  }
-
-  // Set FEN position if provided
-  if (props.fen) {
-    // Note: chessground doesn't parse FEN directly, you need to convert FEN to pieces
-    // This would typically be done with a chess library like chess.js
-    // For now, we'll pass it through and let the parent handle the conversion
-    config.fen = props.fen
   }
 
   return config
@@ -189,8 +245,8 @@ defineExpose({
   }
 }
 
-/* Custom coordinate styling */
-.cg-coordinates .cg-wrap {
-  /* Add padding for coordinates if needed */
+/* Let chessground handle coordinates naturally */
+.cg-coordinates {
+  /* Chessground will handle coordinate positioning automatically */
 }
 </style>

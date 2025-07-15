@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ChessBoard } from '../src/index'
 import type { Key, Piece } from '../src/types/chessground'
 
@@ -44,6 +44,35 @@ const chessBoard = ref()
 const freeMode = ref(false)
 const selectedSquare = ref<Key | null>(null)
 const moves = ref<Array<{ from: Key, to: Key, captured?: Piece }>>([])
+
+// Helper function to convert FEN to pieces format
+const fenToPieces = (fen: string) => {
+  const pieces = new Map()
+  const rows = fen.split(' ')[0].split('/')
+  
+  for (let rank = 0; rank < 8; rank++) {
+    let file = 0
+    for (const char of rows[rank]) {
+      if (char >= '1' && char <= '8') {
+        file += parseInt(char)
+      } else {
+        const color = char === char.toUpperCase() ? 'white' : 'black'
+        const role = char.toLowerCase()
+        const roleMap: Record<string, string> = {
+          'p': 'pawn', 'r': 'rook', 'n': 'knight',
+          'b': 'bishop', 'q': 'queen', 'k': 'king'
+        }
+        const square = String.fromCharCode(97 + file) + (8 - rank)
+        pieces.set(square, { role: roleMap[role], color })
+        file++
+      }
+    }
+  }
+  return pieces
+}
+
+// Starting position pieces
+const startingPosition = fenToPieces('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
 
 // Computed configuration
 const movableConfig = computed(() => ({
@@ -71,10 +100,9 @@ const flipBoard = () => {
 
 const resetBoard = () => {
   if (chessBoard.value) {
-    // Reset to starting position
-    chessBoard.value.set({
-      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-    })
+    console.log('[DEBUG] Basic example - resetting board with:', startingPosition)
+    // Reset to starting position using proper pieces format
+    chessBoard.value.setPieces(startingPosition)
     moves.value = []
     selectedSquare.value = null
   }
@@ -83,6 +111,17 @@ const resetBoard = () => {
 const toggleFreeMode = () => {
   freeMode.value = !freeMode.value
 }
+
+// Initialize board with starting position
+onMounted(() => {
+  setTimeout(() => {
+    if (chessBoard.value) {
+      console.log('[DEBUG] Basic example - setting pieces:', startingPosition)
+      console.log('[DEBUG] Basic example - startingPosition type:', typeof startingPosition)
+      chessBoard.value.setPieces(startingPosition)
+    }
+  }, 100)
+})
 </script>
 
 <style scoped>
