@@ -247,9 +247,13 @@ const resetFreeBoard = () => {
 
 const clearFreeBoard = () => {
   if (freeBoard.value) {
-    // Clear all pieces and force redraw
-    freeBoard.value.setPieces(new Map())
-    freeBoard.value.redrawAll()
+    // Use the same FEN-based approach that works for reset
+    freeBoard.value.set({
+      fen: '8/8/8/8/8/8/8/8 w - - 0 1',
+      lastMove: undefined,
+      selected: undefined,
+      check: undefined
+    })
     console.log('[DEBUG] COMPREHENSIVE - Free board cleared')
   }
 }
