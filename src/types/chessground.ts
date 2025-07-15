@@ -29,6 +29,8 @@ export interface ChessBoardProps {
   
   // Visual configuration
   coordinates?: boolean
+  coordinatesPosition?: 'inside' | 'outside'
+  coordinatesOnSquares?: boolean
   autoCastle?: boolean
   viewOnly?: boolean
   disableContextMenu?: boolean

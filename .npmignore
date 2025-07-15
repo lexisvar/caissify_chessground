@@ -1,0 +1,25 @@
+# Reference chessground source (for analysis only)
+chessground-9.2.1/
+
+# Development files
+src/
+examples/
+test/
+demo/
+*.test.ts
+*.test.js
+.vscode/
+.idea/
+
+# Build tools
+vite.config.ts
+tsconfig.json
+.eslintrc.cjs
+
+# Documentation
+README.md
+LICENSE
+
+# Git
+.git/
+.gitignore

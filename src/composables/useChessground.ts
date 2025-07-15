@@ -98,24 +98,29 @@ export function useChessground(
         const configWithoutFen = { ...newConfig }
         delete (configWithoutFen as any).fen
         
-        // Clear all state completely
-        chessground.value.setPieces(new Map())
-        chessground.value.cancelMove()
-        chessground.value.selectSquare(null)
-        
-        // Apply configuration without FEN, ensuring clean state
-        chessground.value.set({
-          ...configWithoutFen,
-          lastMove: undefined,
-          selected: undefined,
-          check: undefined
-        })
-        
-        // Set the new pieces and force redraw
-        chessground.value.setPieces(pieces)
-        chessground.value.redrawAll()
-        
-        console.log('[DEBUG] FEN processed and board updated with clean state')
+        // For FEN-based resets, destroy and recreate the chessground instance
+        // This ensures complete visual state clearing
+        if (element.value) {
+          chessground.value.destroy()
+          
+          // Recreate with clean configuration - explicitly clear pieces to avoid conflicts
+          const cleanConfig = {
+            ...config.value,
+            ...configWithoutFen,
+            lastMove: undefined,
+            selected: undefined,
+            check: undefined,
+            // Ensure no pieces are set during recreation
+            pieces: new Map()
+          }
+          
+          chessground.value = Chessground(element.value, cleanConfig)
+          
+          // Set FEN pieces immediately after recreation (no setTimeout needed)
+          chessground.value.setPieces(pieces)
+          chessground.value.redrawAll()
+          console.log('[DEBUG] FEN processed with complete instance recreation')
+        }
       } else {
         chessground.value.set(newConfig)
       }
