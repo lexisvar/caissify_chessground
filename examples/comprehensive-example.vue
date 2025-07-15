@@ -55,6 +55,7 @@
               coordinates-position="outside"
               :movable="{ free: false, color: 'white' }"
               :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
             />
           </div>
           <div class="size-info">
@@ -84,6 +85,7 @@
               coordinates-position="outside"
               :movable="{ free: false, color: 'white' }"
               :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
             />
           </div>
           <div class="size-info">
@@ -114,6 +116,7 @@
               coordinates-position="outside"
               :movable="{ free: false, color: 'white' }"
               :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
             />
           </div>
           <div class="size-info">
@@ -136,7 +139,7 @@
       <div class="size-demo-controls">
         <div class="controls-header">
           <h3>🎮 Try These Actions</h3>
-          <p>Test how coordinates behave across all board sizes</p>
+          <p>Test how coordinates behave across all board sizes. Right-click and drag to draw arrows and circles!</p>
         </div>
         <div class="control-buttons">
           <button class="btn-primary" @click="resetAllSizeBoards">
@@ -150,6 +153,14 @@
           <button class="btn-accent" @click="loadTestPositionAll">
             <span class="btn-icon">🎯</span>
             Load Test Position
+          </button>
+          <button class="btn-drawing" @click="addArrowsToSizeBoards">
+            <span class="btn-icon">🏹</span>
+            Add Sample Arrows
+          </button>
+          <button class="btn-clear" @click="clearAllShapes">
+            <span class="btn-icon">🧹</span>
+            Clear All Drawings
           </button>
         </div>
       </div>
@@ -177,6 +188,7 @@
             coordinates-position="inside"
             :movable="{ free: false, color: basicCurrentColor }"
             :highlight="{ lastMove: true, check: true }"
+            :drawable="{ enabled: true, visible: true }"
             @move="onBasicMove"
             @select="onBasicSelect"
           />
@@ -201,6 +213,7 @@
             coordinates-position="outside"
             :movable="{ free: true, color: 'both' }"
             :highlight="{ lastMove: true }"
+            :drawable="{ enabled: true, visible: true }"
             @move="onFreeMove"
           />
         </div>
@@ -248,6 +261,7 @@
             :coordinates="true"
             :movable="{ free: false, color: currentTurn }"
             :highlight="{ lastMove: true, check: true }"
+            :drawable="{ enabled: true, visible: true }"
             @move="onHistoryMove"
             @select="onHistorySelect"
             @change="onBoardChange"
@@ -627,6 +641,35 @@ const loadTestPositionAll = () => {
   if (board500.value) {
     board500.value.set({ fen: testFen })
   }
+}
+
+// Drawing helper functions for size demo boards
+const addArrowsToSizeBoards = () => {
+  const sampleShapes = [
+    { orig: 'e2', dest: 'e4', brush: 'green' },
+    { orig: 'd1', dest: 'h5', brush: 'red' },
+    { orig: 'g1', dest: 'f3', brush: 'blue' }
+  ]
+  
+  if (board350.value) {
+    board350.value.setShapes(sampleShapes)
+  }
+  if (board400.value) {
+    board400.value.setShapes(sampleShapes)
+  }
+  if (board500.value) {
+    board500.value.setShapes(sampleShapes)
+  }
+}
+
+const clearAllShapes = () => {
+  // Clear shapes from all boards
+  const allBoards = [basicBoard, freeBoard, analysisBoard, historyBoard, board350, board400, board500]
+  allBoards.forEach(board => {
+    if (board.value) {
+      board.value.setShapes([])
+    }
+  })
 }
 
 // Initialize boards on mount
@@ -1220,6 +1263,26 @@ h1 {
 
 .btn-accent:hover {
   background: #218838;
+  transform: translateY(-1px);
+}
+
+.btn-drawing {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-drawing:hover {
+  background: #138496;
+  transform: translateY(-1px);
+}
+
+.btn-clear {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-clear:hover {
+  background: #c82333;
   transform: translateY(-1px);
 }
 
