@@ -34,13 +34,13 @@ export function useChessground(
     }
   }
 
-  // Watch for config changes - use shallow watching to prevent excessive re-renders
+  // Watch for config changes - use deep watching to detect nested property changes like movable.dests
   watch(
     config,
     (newConfig) => {
       updateConfig(newConfig)
     },
-    { deep: false }
+    { deep: true }
   )
 
   // Watch for element changes

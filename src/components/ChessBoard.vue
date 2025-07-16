@@ -235,8 +235,8 @@ const chessgroundConfig = computed<Config>(() => {
       color: props.movable?.color || 'white',
       rookCastle: props.movable?.rookCastle !== false,
       showDests: props.movable?.showDests !== false,
-      // Add basic destinations for all pieces if not in free mode
-      dests: props.movable?.free ? undefined : getBasicDests(),
+      // Use provided dests if available, otherwise use basic dests for free mode fallback
+      dests: props.movable?.dests || (props.movable?.free ? undefined : getBasicDests()),
       events: {
         after: (orig, dest, metadata) => {
           // This ensures the move is properly committed
