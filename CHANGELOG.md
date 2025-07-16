@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2025-01-16
+
+### 🔧 Fixed
+- **CRITICAL**: Fixed `@move` event not firing due to chessground instance being destroyed during FEN updates
+- **CRITICAL**: Fixed movable configuration being lost when board position changes
+- Fixed chess pieces becoming unresponsive after FEN position updates
+- Fixed reactive `movable.dests` configuration being cleared during board updates
+
+### 🚀 Improved
+- Enhanced FEN update mechanism to preserve movable configuration and event handlers
+- Improved chessground instance lifecycle management to avoid unnecessary destruction/recreation
+- Better state preservation during board position changes
+
+### 📝 Technical Details
+- **useChessground.ts**: Modified `set()` function (lines 125-159) to use `setPieces()` instead of destroying/recreating chessground instance
+- **useChessground.ts**: Added configuration merging to preserve reactive movable state during FEN updates
+- **useChessground.ts**: Enabled deep watching for reactive configuration updates (`{ deep: true }`)
+
+### 🐛 Bug Context
+This release fixes a critical regression where:
+1. The `set()` function was destroying and recreating the chessground instance during FEN updates
+2. This caused the reactive `movable.dests` configuration (containing legal moves) to be lost
+3. Without legal moves, pieces became unselectable and the `@move` event never fired
+4. The chess board appeared "frozen" and unresponsive to user interaction
+
+### 💔 Breaking Changes
+None - this is a backward-compatible bug fix.
+
+### 🧪 Testing
+- Added comprehensive test component `debug-comprehensive-test.vue` for thorough event debugging
+- Verified `@move` event fires correctly with legal move validation
+- Confirmed chess board remains interactive after FEN position updates
+- Tested with chess.js integration patterns
+
+---
+
 ## [1.0.8] - 2025-01-16
 
 ### 🔧 Fixed

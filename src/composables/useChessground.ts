@@ -98,28 +98,21 @@ export function useChessground(
         const configWithoutFen = { ...newConfig }
         delete (configWithoutFen as any).fen
         
-        // For FEN-based resets, destroy and recreate the chessground instance
-        // This ensures complete visual state clearing
-        if (element.value) {
-          chessground.value.destroy()
-          
-          // Recreate with clean configuration - explicitly clear pieces to avoid conflicts
-          const cleanConfig = {
-            ...config.value,
-            ...configWithoutFen,
-            lastMove: undefined,
-            selected: undefined,
-            check: undefined,
-            // Ensure no pieces are set during recreation
-            pieces: new Map()
-          }
-          
-          chessground.value = Chessground(element.value, cleanConfig)
-          
-          // Set FEN pieces immediately after recreation (no setTimeout needed)
-          chessground.value.setPieces(pieces)
-          chessground.value.redrawAll()
+        // Instead of destroying and recreating, just set pieces and update config
+        // This preserves the movable configuration and event handlers
+        chessground.value.setPieces(pieces)
+        
+        // Update the configuration while preserving the current reactive state
+        const mergedConfig = {
+          ...config.value,      // Current reactive config with correct movable.dests
+          ...configWithoutFen,  // Any new config without FEN
+          lastMove: configWithoutFen.lastMove || undefined,
+          selected: undefined,
+          check: configWithoutFen.check || undefined
         }
+        
+        chessground.value.set(mergedConfig)
+        chessground.value.redrawAll()
       } else {
         chessground.value.set(newConfig)
       }
