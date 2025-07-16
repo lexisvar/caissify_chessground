@@ -119,7 +119,6 @@ export function useChessground(
           // Set FEN pieces immediately after recreation (no setTimeout needed)
           chessground.value.setPieces(pieces)
           chessground.value.redrawAll()
-          // FEN processed with complete instance recreation
         }
       } else {
         chessground.value.set(newConfig)

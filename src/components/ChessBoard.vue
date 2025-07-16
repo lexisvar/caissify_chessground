@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useChessground } from '@/composables/useChessground'
 import type { ChessBoardProps, ChessBoardEmits, Config, Key } from '@/types/chessground'
 
@@ -325,17 +325,28 @@ const {
   dragNewPiece
 } = useChessground(boardElement, chessgroundConfig)
 
-// Watch for FEN changes and update pieces
+// Watch for FEN changes and update pieces - only when chessground is ready
 watch(
   () => props.fen,
   (newFen) => {
     if (newFen && chessground.value) {
-      // Note: In a real implementation, you'd convert FEN to pieces here
-      // For now, we emit an event so the parent can handle it
+      // Use the set method which handles FEN conversion
+      set({ fen: newFen })
       emit('change')
     }
   }
 )
+
+// Process initial FEN after component is mounted and chessground is ready
+onMounted(() => {
+  // Wait for next tick to ensure chessground is fully initialized
+  nextTick(() => {
+    if (props.fen && chessground.value) {
+      set({ fen: props.fen })
+      emit('change')
+    }
+  })
+})
 
 // Expose methods to parent component
 defineExpose({
