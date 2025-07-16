@@ -34,13 +34,13 @@ export function useChessground(
     }
   }
 
-  // Watch for config changes
+  // Watch for config changes - use shallow watching to prevent excessive re-renders
   watch(
     config,
     (newConfig) => {
       updateConfig(newConfig)
     },
-    { deep: true }
+    { deep: false }
   )
 
   // Watch for element changes

@@ -278,8 +278,18 @@ const chessgroundConfig = computed<Config>(() => {
           if (validMoves && validMoves.includes(key)) {
             // Execute the move programmatically
             if (chessground.value) {
-              chessground.value.move(selectedSquare.value as Key, key)
-              // Note: chessground.move() should trigger the 'after' event automatically
+              const orig = selectedSquare.value as Key
+              const dest = key
+              
+              // Get the piece at destination before making the move (for capture detection)
+              const capturedPiece = chessground.value.state.pieces.get(dest)
+              
+              // Make the move
+              chessground.value.move(orig, dest)
+              
+              // Manually trigger the move event since programmatic moves don't always fire it
+              props.onMove?.(orig, dest, capturedPiece)
+              emit('move', orig, dest, capturedPiece)
             }
             selectedSquare.value = null
             return
