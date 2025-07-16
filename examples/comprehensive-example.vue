@@ -13,7 +13,7 @@
           <div class="step-number">1</div>
           <div class="step-content">
             <h3>Choose Your Size</h3>
-            <p>See how coordinates scale perfectly at 350px, 400px, and 500px</p>
+            <p>See how coordinates scale perfectly at 300px, 400px, and 500px</p>
           </div>
         </div>
         <div class="step">
@@ -39,16 +39,16 @@
         <h2>📏 Board Size Comparison</h2>
         <p class="section-description">
           Watch how coordinates automatically scale and remain perfectly readable at different board sizes.
-          This solves the original issue where coordinates didn't fit properly on smaller boards.
+          From compact 300px mobile boards to spacious 500px desktop displays.
         </p>
       </div>
       
       <div class="size-demo-grid">
-        <!-- 350px Board -->
+        <!-- 300px Board -->
         <div class="size-demo-item">
           <div class="size-badge mobile">📱 Mobile</div>
-          <h3>350px × 350px</h3>
-          <div class="board-container size-350">
+          <h3>300px × 300px</h3>
+          <div class="board-container size-300">
             <ChessBoard
               ref="board350"
               :coordinates="true"
@@ -61,7 +61,7 @@
           <div class="size-info">
             <div class="info-row">
               <span class="info-label">📐 Size:</span>
-              <span class="info-value">350px × 350px</span>
+              <span class="info-value">300px × 300px</span>
             </div>
             <div class="info-row">
               <span class="info-label">🎯 Best for:</span>
@@ -284,6 +284,182 @@
       </div>
     </div>
 
+    <!-- Advanced Examples Section -->
+    <div class="advanced-section">
+      <div class="section-header">
+        <h2>🚀 Advanced Examples</h2>
+        <p class="section-description">
+          Explore programmatic control, FEN manipulation, and advanced chess board features
+        </p>
+      </div>
+
+      <div class="demo-grid">
+        <!-- Programmatic Moves -->
+        <div class="demo-section">
+          <h2>5. Programmatic Moves</h2>
+          <div class="board-container">
+            <ChessBoard
+              ref="programmaticBoard"
+              :coordinates="true"
+              :movable="{ free: false, color: programmaticTurn }"
+              :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
+              @move="onProgrammaticMove"
+            />
+          </div>
+          <div class="controls">
+            <button @click="makeRandomMove">Make Random Move</button>
+            <button @click="playOpeningSequence">Play Opening</button>
+            <button @click="resetProgrammaticBoard">Reset</button>
+          </div>
+          <div class="info">
+            <strong>Turn:</strong> {{ programmaticTurn }}<br>
+            <strong>Auto-moves:</strong> {{ programmaticMoves.length }}<br>
+            <strong>Status:</strong> {{ programmaticStatus }}
+          </div>
+        </div>
+
+        <!-- Programmatic Shapes -->
+        <div class="demo-section">
+          <h2>6. Programmatic Shapes</h2>
+          <div class="board-container">
+            <ChessBoard
+              ref="shapesBoard"
+              :coordinates="true"
+              :view-only="true"
+              :drawable="{ enabled: true, visible: true }"
+            />
+          </div>
+          <div class="controls">
+            <button @click="addTacticalArrows">Tactical Arrows</button>
+            <button @click="addCircleHighlights">Circle Highlights</button>
+            <button @click="animateShapes">Animate Shapes</button>
+            <button @click="clearAllShapesDemo">Clear All</button>
+          </div>
+          <div class="info">
+            <strong>Active Shapes:</strong> {{ activeShapes.length }}<br>
+            <strong>Shape Types:</strong> {{ shapeTypes.join(', ') || 'None' }}<br>
+            <strong>Animation:</strong> {{ shapeAnimation ? 'Running' : 'Stopped' }}
+          </div>
+        </div>
+
+        <!-- FEN & Position History -->
+        <div class="demo-section">
+          <h2>7. FEN & Position History</h2>
+          <div class="board-container">
+            <ChessBoard
+              ref="fenBoard"
+              :coordinates="true"
+              :movable="{ free: false, color: fenCurrentTurn }"
+              :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
+              @move="onFenMove"
+            />
+          </div>
+          <div class="controls">
+            <button @click="undoFenMove" :disabled="fenHistory.length <= 1">Undo Move</button>
+            <button @click="redoFenMove" :disabled="fenRedoStack.length === 0">Redo Move</button>
+            <button @click="loadRandomPosition">Random Position</button>
+            <button @click="resetFenBoard">Reset</button>
+          </div>
+          <div class="fen-display">
+            <h4>Current FEN:</h4>
+            <div class="fen-string">{{ currentFen }}</div>
+            <div class="position-info">
+              <strong>Move:</strong> {{ fenHistory.length - 1 }}<br>
+              <strong>Turn:</strong> {{ fenCurrentTurn }}<br>
+              <strong>History:</strong> {{ fenHistory.length }} positions
+            </div>
+          </div>
+        </div>
+
+        <!-- Animation & Effects -->
+        <div class="demo-section">
+          <h2>8. Animation & Effects</h2>
+          <div class="board-container">
+            <ChessBoard
+              ref="animationBoard"
+              :coordinates="true"
+              :view-only="true"
+              :animation="animationConfig"
+              :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
+            />
+          </div>
+          <div class="controls">
+            <button @click="demonstrateCapture">Capture Animation</button>
+            <button @click="demonstrateCastling">Castling Animation</button>
+            <button @click="explodeBoard">Explode Effect</button>
+            <button @click="toggleAnimationSpeed">Speed: {{ animationSpeed }}</button>
+          </div>
+          <div class="info">
+            <strong>Animation:</strong> {{ animationConfig.enabled ? 'Enabled' : 'Disabled' }}<br>
+            <strong>Duration:</strong> {{ animationConfig.duration }}ms<br>
+            <strong>Effects:</strong> {{ currentEffect || 'None' }}
+          </div>
+        </div>
+
+        <!-- Piece Themes & Customization -->
+        <div class="demo-section">
+          <h2>9. Themes & Customization</h2>
+          <div class="board-container">
+            <ChessBoard
+              ref="themeBoard"
+              :coordinates="true"
+              :coordinates-position="coordinatePosition"
+              :view-only="true"
+              :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
+            />
+          </div>
+          <div class="controls">
+            <button @click="toggleCoordinatePosition">Coords: {{ coordinatePosition }}</button>
+            <button @click="toggleBoardOrientation">Flip Board</button>
+            <button @click="loadCustomPosition">Custom Setup</button>
+            <button @click="resetThemeBoard">Reset</button>
+          </div>
+          <div class="info">
+            <strong>Coordinates:</strong> {{ coordinatePosition }}<br>
+            <strong>Orientation:</strong> {{ themeOrientation }}<br>
+            <strong>Custom Setup:</strong> {{ customSetup ? 'Active' : 'Standard' }}
+          </div>
+        </div>
+
+        <!-- Event Handling & Debugging -->
+        <div class="demo-section">
+          <h2>10. Event Handling</h2>
+          <div class="board-container">
+            <ChessBoard
+              ref="eventBoard"
+              :coordinates="true"
+              :movable="{ free: true, color: 'both' }"
+              :highlight="{ lastMove: true, check: true }"
+              :drawable="{ enabled: true, visible: true }"
+              @move="onEventMove"
+              @select="onEventSelect"
+              @insert="onEventInsert"
+              @change="onEventChange"
+            />
+          </div>
+          <div class="controls">
+            <button @click="clearEventLog">Clear Log</button>
+            <button @click="simulateEvents">Simulate Events</button>
+            <button @click="toggleEventLogging">Logging: {{ eventLogging ? 'On' : 'Off' }}</button>
+          </div>
+          <div class="event-log">
+            <h4>Event Log:</h4>
+            <div class="log-container">
+              <div v-for="(event, index) in eventLog" :key="index" class="log-entry">
+                <span class="log-time">{{ event.time }}</span>
+                <span class="log-type" :class="`log-${event.type}`">{{ event.type }}</span>
+                <span class="log-data">{{ event.data }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Global Controls -->
     <div class="global-controls">
       <h3>Global Actions</h3>
@@ -329,6 +505,44 @@ const viewOnly = ref(true)
 const currentTurn = ref<'white' | 'black'>('white')
 const moveHistory = ref<Array<{ from: Key, to: Key, captured?: Piece }>>([])
 const testResults = ref<Array<{ name: string, passed: boolean, message: string }>>([])
+
+// Advanced examples board refs
+const programmaticBoard = ref()
+const shapesBoard = ref()
+const fenBoard = ref()
+const animationBoard = ref()
+const themeBoard = ref()
+const eventBoard = ref()
+
+// Programmatic moves state
+const programmaticTurn = ref<'white' | 'black'>('white')
+const programmaticMoves = ref<Array<{ from: Key, to: Key }>>([])
+const programmaticStatus = ref<string>('Ready')
+
+// Shape management state
+const activeShapes = ref<Array<any>>([])
+const shapeTypes = ref<Array<string>>([])
+const shapeAnimation = ref<boolean>(false)
+
+// FEN history state
+const fenHistory = ref<Array<string>>(['rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'])
+const fenRedoStack = ref<Array<string>>([])
+const currentFen = ref<string>('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+const fenCurrentTurn = ref<'white' | 'black'>('white')
+
+// Animation configuration
+const animationConfig = ref({ enabled: true, duration: 300 })
+const animationSpeed = ref<'slow' | 'normal' | 'fast'>('normal')
+const currentEffect = ref<string | null>(null)
+
+// Theme customization
+const coordinatePosition = ref<'inside' | 'outside'>('outside')
+const themeOrientation = ref<'white' | 'black'>('white')
+const customSetup = ref<boolean>(false)
+
+// Event logging
+const eventLogging = ref<boolean>(true)
+const eventLog = ref<Array<{ time: string, type: string, data: string }>>([])
 
 // Helper function to convert FEN to pieces format
 const fenToPieces = (fen: string) => {
@@ -672,12 +886,427 @@ const clearAllShapes = () => {
   })
 }
 
+// Advanced examples functions
+
+// Programmatic moves functions
+const onProgrammaticMove = (from: Key, to: Key, captured?: Piece) => {
+  programmaticMoves.value.push({ from, to })
+  programmaticTurn.value = programmaticTurn.value === 'white' ? 'black' : 'white'
+  programmaticStatus.value = `Move: ${from} → ${to}`
+  console.log('Programmatic move:', from, to, captured)
+}
+
+const makeRandomMove = () => {
+  if (!programmaticBoard.value) return
+  
+  // Simple random move simulation
+  const squares = ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1',
+                   'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2',
+                   'a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7',
+                   'a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8']
+  
+  const from = squares[Math.floor(Math.random() * squares.length)] as Key
+  const to = squares[Math.floor(Math.random() * squares.length)] as Key
+  
+  if (from !== to) {
+    programmaticStatus.value = 'Making random move...'
+    setTimeout(() => {
+      programmaticBoard.value?.move(from, to)
+      onProgrammaticMove(from, to)
+    }, 500)
+  }
+}
+
+const playOpeningSequence = () => {
+  if (!programmaticBoard.value) return
+  
+  const openingMoves = [
+    { from: 'e2' as Key, to: 'e4' as Key },
+    { from: 'e7' as Key, to: 'e5' as Key },
+    { from: 'g1' as Key, to: 'f3' as Key },
+    { from: 'b8' as Key, to: 'c6' as Key }
+  ]
+  
+  programmaticStatus.value = 'Playing opening sequence...'
+  
+  openingMoves.forEach((move, index) => {
+    setTimeout(() => {
+      programmaticBoard.value?.move(move.from, move.to)
+      onProgrammaticMove(move.from, move.to)
+      if (index === openingMoves.length - 1) {
+        programmaticStatus.value = 'Opening sequence complete'
+      }
+    }, (index + 1) * 1000)
+  })
+}
+
+const resetProgrammaticBoard = () => {
+  if (programmaticBoard.value) {
+    programmaticBoard.value.set({
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    })
+    programmaticMoves.value = []
+    programmaticTurn.value = 'white'
+    programmaticStatus.value = 'Ready'
+  }
+}
+
+// Shape management functions
+const addTacticalArrows = () => {
+  if (!shapesBoard.value) return
+  
+  const tacticalShapes = [
+    { orig: 'e2', dest: 'e4', brush: 'green' },
+    { orig: 'd1', dest: 'h5', brush: 'red' },
+    { orig: 'g1', dest: 'f3', brush: 'blue' },
+    { orig: 'f1', dest: 'c4', brush: 'yellow' }
+  ]
+  
+  activeShapes.value = tacticalShapes
+  shapeTypes.value = ['arrow']
+  shapesBoard.value.setShapes(tacticalShapes)
+}
+
+const addCircleHighlights = () => {
+  if (!shapesBoard.value) return
+  
+  const circleShapes = [
+    { orig: 'd4', brush: 'green' },
+    { orig: 'e5', brush: 'red' },
+    { orig: 'f4', brush: 'blue' },
+    { orig: 'c5', brush: 'yellow' }
+  ]
+  
+  activeShapes.value = circleShapes
+  shapeTypes.value = ['circle']
+  shapesBoard.value.setShapes(circleShapes)
+}
+
+const animateShapes = () => {
+  if (!shapesBoard.value) return
+  
+  shapeAnimation.value = true
+  let step = 0
+  const shapes = [
+    [{ orig: 'a1', dest: 'h8', brush: 'green' }],
+    [{ orig: 'h1', dest: 'a8', brush: 'red' }],
+    [{ orig: 'e1', dest: 'e8', brush: 'blue' }],
+    [{ orig: 'd1', dest: 'd8', brush: 'yellow' }]
+  ]
+  
+  const animate = () => {
+    if (step < shapes.length) {
+      shapesBoard.value.setShapes(shapes[step])
+      activeShapes.value = shapes[step]
+      step++
+      setTimeout(animate, 800)
+    } else {
+      shapeAnimation.value = false
+      activeShapes.value = []
+      shapeTypes.value = []
+      shapesBoard.value.setShapes([])
+    }
+  }
+  
+  animate()
+}
+
+const clearAllShapesDemo = () => {
+  if (shapesBoard.value) {
+    shapesBoard.value.setShapes([])
+    activeShapes.value = []
+    shapeTypes.value = []
+    shapeAnimation.value = false
+  }
+}
+
+// FEN & Position History functions
+const onFenMove = (from: Key, to: Key, captured?: Piece) => {
+  // Save current position to history before making move
+  fenHistory.value.push(currentFen.value)
+  fenRedoStack.value = [] // Clear redo stack on new move
+  
+  // Update turn
+  fenCurrentTurn.value = fenCurrentTurn.value === 'white' ? 'black' : 'white'
+  
+  // In a real implementation, you'd calculate the new FEN
+  // For demo purposes, we'll use a placeholder
+  currentFen.value = `${currentFen.value.split(' ')[0]} ${fenCurrentTurn.value === 'white' ? 'w' : 'b'} KQkq - 0 1`
+  
+  console.log('FEN move:', from, to, captured)
+}
+
+const undoFenMove = () => {
+  if (fenHistory.value.length > 1) {
+    const currentPosition = fenHistory.value.pop()!
+    fenRedoStack.value.push(currentPosition)
+    
+    const previousPosition = fenHistory.value[fenHistory.value.length - 1]
+    currentFen.value = previousPosition
+    
+    // Extract turn from FEN
+    const fenParts = previousPosition.split(' ')
+    fenCurrentTurn.value = fenParts[1] === 'w' ? 'white' : 'black'
+    
+    if (fenBoard.value) {
+      fenBoard.value.set({ fen: previousPosition })
+    }
+  }
+}
+
+const redoFenMove = () => {
+  if (fenRedoStack.value.length > 0) {
+    const nextPosition = fenRedoStack.value.pop()!
+    fenHistory.value.push(nextPosition)
+    currentFen.value = nextPosition
+    
+    // Extract turn from FEN
+    const fenParts = nextPosition.split(' ')
+    fenCurrentTurn.value = fenParts[1] === 'w' ? 'white' : 'black'
+    
+    if (fenBoard.value) {
+      fenBoard.value.set({ fen: nextPosition })
+    }
+  }
+}
+
+const loadRandomPosition = () => {
+  const randomPositions = [
+    'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 4 4',
+    'rnbqkb1r/pp1ppppp/5n2/2p5/2P5/5N2/PP1PPPPP/RNBQKB1R w KQkq c6 0 3',
+    'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 4 4'
+  ]
+  
+  const randomFen = randomPositions[Math.floor(Math.random() * randomPositions.length)]
+  currentFen.value = randomFen
+  fenHistory.value.push(randomFen)
+  fenRedoStack.value = []
+  
+  // Extract turn from FEN
+  const fenParts = randomFen.split(' ')
+  fenCurrentTurn.value = fenParts[1] === 'w' ? 'white' : 'black'
+  
+  if (fenBoard.value) {
+    fenBoard.value.set({ fen: randomFen })
+  }
+}
+
+const resetFenBoard = () => {
+  const startingFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+  currentFen.value = startingFen
+  fenHistory.value = [startingFen]
+  fenRedoStack.value = []
+  fenCurrentTurn.value = 'white'
+  
+  if (fenBoard.value) {
+    fenBoard.value.set({ fen: startingFen })
+  }
+}
+
+// Animation & Effects functions
+const demonstrateCapture = () => {
+  if (!animationBoard.value) return
+  
+  currentEffect.value = 'Capture Animation'
+  animationBoard.value.set({
+    fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 2 3'
+  })
+  
+  setTimeout(() => {
+    animationBoard.value?.move('c4', 'f7') // Capture move
+    setTimeout(() => {
+      currentEffect.value = null
+    }, 1000)
+  }, 500)
+}
+
+const demonstrateCastling = () => {
+  if (!animationBoard.value) return
+  
+  currentEffect.value = 'Castling Animation'
+  animationBoard.value.set({
+    fen: 'r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1'
+  })
+  
+  setTimeout(() => {
+    // Simulate castling (this would need proper implementation)
+    animationBoard.value?.move('e1', 'g1') // King side castling
+    setTimeout(() => {
+      currentEffect.value = null
+    }, 1000)
+  }, 500)
+}
+
+const explodeBoard = () => {
+  if (!animationBoard.value) return
+  
+  currentEffect.value = 'Explode Effect'
+  
+  // Simulate explosion by rapidly changing positions
+  let explosionStep = 0
+  const explode = () => {
+    if (explosionStep < 5) {
+      const randomFen = explosionStep % 2 === 0 ?
+        '8/8/8/8/8/8/8/8 w - - 0 1' :
+        'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+      
+      animationBoard.value?.set({ fen: randomFen })
+      explosionStep++
+      setTimeout(explode, 200)
+    } else {
+      animationBoard.value?.set({
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+      })
+      currentEffect.value = null
+    }
+  }
+  
+  explode()
+}
+
+const toggleAnimationSpeed = () => {
+  const speeds: Array<'slow' | 'normal' | 'fast'> = ['slow', 'normal', 'fast']
+  const currentIndex = speeds.indexOf(animationSpeed.value)
+  const nextIndex = (currentIndex + 1) % speeds.length
+  animationSpeed.value = speeds[nextIndex]
+  
+  const durations = { slow: 600, normal: 300, fast: 150 }
+  animationConfig.value.duration = durations[animationSpeed.value]
+  
+  if (animationBoard.value) {
+    animationBoard.value.set({ animation: animationConfig.value })
+  }
+}
+
+// Theme & Customization functions
+const toggleCoordinatePosition = () => {
+  coordinatePosition.value = coordinatePosition.value === 'inside' ? 'outside' : 'inside'
+  if (themeBoard.value) {
+    themeBoard.value.set({ coordinatesPosition: coordinatePosition.value })
+  }
+}
+
+const toggleBoardOrientation = () => {
+  themeOrientation.value = themeOrientation.value === 'white' ? 'black' : 'white'
+  if (themeBoard.value) {
+    themeBoard.value.toggleOrientation()
+  }
+}
+
+const loadCustomPosition = () => {
+  if (!themeBoard.value) return
+  
+  customSetup.value = true
+  const customFen = 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4'
+  themeBoard.value.set({ fen: customFen })
+}
+
+const resetThemeBoard = () => {
+  if (themeBoard.value) {
+    themeBoard.value.set({
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    })
+    customSetup.value = false
+    coordinatePosition.value = 'outside'
+    themeOrientation.value = 'white'
+  }
+}
+
+// Event handling functions
+const logEvent = (type: string, data: any) => {
+  if (!eventLogging.value) return
+  
+  const timestamp = new Date().toLocaleTimeString()
+  eventLog.value.unshift({
+    time: timestamp,
+    type,
+    data: JSON.stringify(data)
+  })
+  
+  // Keep only last 50 events
+  if (eventLog.value.length > 50) {
+    eventLog.value = eventLog.value.slice(0, 50)
+  }
+}
+
+const onEventMove = (from: Key, to: Key, captured?: Piece) => {
+  logEvent('move', { from, to, captured })
+}
+
+const onEventSelect = (square: Key) => {
+  logEvent('select', { square })
+}
+
+const onEventInsert = (piece: Piece, square: Key) => {
+  logEvent('insert', { piece, square })
+}
+
+const onEventChange = () => {
+  logEvent('change', { timestamp: Date.now() })
+}
+
+const clearEventLog = () => {
+  eventLog.value = []
+}
+
+const simulateEvents = () => {
+  if (!eventBoard.value) return
+  
+  const events = [
+    () => eventBoard.value?.selectSquare('e2'),
+    () => eventBoard.value?.move('e2', 'e4'),
+    () => eventBoard.value?.selectSquare('e7'),
+    () => eventBoard.value?.move('e7', 'e5')
+  ]
+  
+  events.forEach((event, index) => {
+    setTimeout(event, (index + 1) * 1000)
+  })
+}
+
+const toggleEventLogging = () => {
+  eventLogging.value = !eventLogging.value
+  if (!eventLogging.value) {
+    logEvent('system', 'Event logging disabled')
+  } else {
+    logEvent('system', 'Event logging enabled')
+  }
+}
+
 // Initialize boards on mount
 import { onMounted } from 'vue'
 onMounted(() => {
   setTimeout(() => {
     resetAllBoards()
     resetAllSizeBoards()
+    
+    // Initialize advanced example boards
+    resetProgrammaticBoard()
+    resetFenBoard()
+    resetThemeBoard()
+    
+    // Set up shapes board with a test position
+    if (shapesBoard.value) {
+      shapesBoard.value.set({
+        fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 4 4'
+      })
+    }
+    
+    // Set up animation board
+    if (animationBoard.value) {
+      animationBoard.value.set({
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        animation: animationConfig.value
+      })
+    }
+    
+    // Set up event board
+    if (eventBoard.value) {
+      eventBoard.value.set({
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+      })
+      logEvent('system', 'Event board initialized')
+    }
   }, 100)
 })
 </script>
@@ -721,7 +1350,7 @@ onMounted(() => {
   max-width: 480px;
   margin: 0 auto 20px auto;
   /* Ensure minimum size for proper coordinate scaling */
-  min-width: 380px;
+  min-width: 300px;
   aspect-ratio: 1;
 }
 
@@ -1121,13 +1750,28 @@ h1 {
   font-weight: 600;
 }
 
-Fixed size containers for demonstration
-.size-350 {
-  width: 350px !important;
-  height: 350px !important;
-  min-width: 350px !important;
-  max-width: 350px !important;
-  margin: 0 auto;
+/* Fixed size containers for demonstration - Target chessground container directly */
+.size-300 .chessground {
+  width: 300px !important;
+  height: 300px !important;
+  min-width: 300px;
+  min-height: 300px;
+}
+
+.size-300 {
+  width: 300px !important;
+  height: 300px !important;
+  min-width: 300px !important;
+  max-width: 300px !important;
+  margin: 0 auto 80px auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  position: relative;
+}
+
+.size-400 .chessground {
+  width: 400px !important;
+  height: 400px !important;
 }
 
 .size-400 {
@@ -1135,7 +1779,14 @@ Fixed size containers for demonstration
   height: 400px !important;
   min-width: 400px !important;
   max-width: 400px !important;
-  margin: 0 auto;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.size-500 .chessground {
+  width: 500px !important;
+  height: 500px !important;
 }
 
 .size-500 {
@@ -1143,7 +1794,9 @@ Fixed size containers for demonstration
   height: 500px !important;
   min-width: 500px !important;
   max-width: 500px !important;
-  margin: 0 auto;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .size-info {
@@ -1338,11 +1991,190 @@ Fixed size containers for demonstration
     padding: 20px;
   }
   
-  .size-350, .size-400, .size-500 {
+  .size-300, .size-400, .size-500 {
     width: 300px !important;
     height: 300px !important;
     min-width: 300px !important;
     max-width: 300px !important;
+  }
+}
+
+/* Advanced Examples Section Styles */
+.advanced-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 40px;
+  margin-bottom: 40px;
+  border: 2px solid #e9ecef;
+}
+
+.advanced-section .section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.advanced-section .section-header h2 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.advanced-section .section-description {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* FEN Display Styles */
+.fen-display {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.fen-display h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.fen-string {
+  font-family: 'Courier New', monospace;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  word-break: break-all;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.position-info {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Event Log Styles */
+.event-log {
+  margin-top: 15px;
+}
+
+.event-log h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.log-container {
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.log-entry {
+  display: flex;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  color: #666;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.log-type {
+  min-width: 60px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.log-type.log-move {
+  color: #007bff;
+}
+
+.log-type.log-select {
+  color: #28a745;
+}
+
+.log-type.log-insert {
+  color: #ffc107;
+}
+
+.log-type.log-change {
+  color: #6f42c1;
+}
+
+.log-type.log-system {
+  color: #dc3545;
+}
+
+.log-data {
+  color: #333;
+  flex: 1;
+  word-break: break-word;
+}
+
+/* Button disabled state */
+button:disabled {
+  background: #6c757d !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+button:disabled:hover {
+  background: #6c757d !important;
+  transform: none;
+}
+
+/* Advanced demo sections responsive adjustments */
+@media (max-width: 1200px) {
+  .advanced-section {
+    padding: 30px;
+  }
+  
+  .advanced-section .demo-grid {
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 35px;
+  }
+}
+
+@media (max-width: 900px) {
+  .advanced-section .demo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .advanced-section {
+    padding: 20px;
+  }
+  
+  .fen-string {
+    font-size: 10px;
+  }
+  
+  .log-container {
+    max-height: 150px;
+  }
+  
+  .log-entry {
+    font-size: 11px;
   }
 }
 </style>
