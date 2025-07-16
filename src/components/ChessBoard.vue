@@ -362,92 +362,25 @@ defineExpose({
 })
 </script>
 
-<style>
-/*
-  NOTE: Chessground CSS must be imported by the consuming application.
-  Add these imports to your main CSS file or component:
+<!--
+  NOTE: This component has NO CSS to prevent conflicts with user applications.
+  
+  Users must import the required chessground CSS files in their main application:
   
   @import 'chessground/assets/chessground.base.css';
   @import 'chessground/assets/chessground.brown.css';
   @import 'chessground/assets/chessground.cburnett.css';
-*/
-
-/* Component-specific styling - responsive coordinate scaling */
-.chessground {
-  width: 100%;
-  height: 100%;
-  /* Optimal size for coordinate display - matches original demo */
-  min-width: 400px;
-  min-height: 400px;
   
-  /* CSS custom properties for responsive scaling */
-  --cg-coordinate-font-size: clamp(10px, 2.5vw, 14px);
-  --cg-coordinate-offset: clamp(2px, 0.5vw, 4px);
-}
-
-/* Add the essential background color from original demo */
-.chessground cg-board {
-  background-color: #bfcfdd;
-}
-
-/* Responsive coordinate scaling based on container size */
-.chessground coords {
-  font-size: var(--cg-coordinate-font-size) !important;
-  font-weight: 600 !important;
-}
-
-/* Scale file coordinates (a-h) */
-.chessground coords.files coord {
-  font-size: var(--cg-coordinate-font-size) !important;
-  bottom: var(--cg-coordinate-offset) !important;
-}
-
-/* Scale rank coordinates (1-8) */
-.chessground coords.ranks coord {
-  font-size: var(--cg-coordinate-font-size) !important;
-  left: var(--cg-coordinate-offset) !important;
-}
-
-/* Responsive scaling for different board sizes */
-@container (max-width: 400px) {
+  For responsive board sizing and coordinate scaling, users can add:
+  
   .chessground {
-    --cg-coordinate-font-size: 10px;
-    --cg-coordinate-offset: 2px;
+    width: 100%;
+    height: 100%;
+    min-width: 400px;
+    min-height: 400px;
   }
-}
-
-@container (min-width: 500px) {
-  .chessground {
-    --cg-coordinate-font-size: 14px;
-    --cg-coordinate-offset: 4px;
+  
+  .chessground cg-board {
+    background-color: #bfcfdd;
   }
-}
-
-@container (min-width: 600px) {
-  .chessground {
-    --cg-coordinate-font-size: 16px;
-    --cg-coordinate-offset: 5px;
-  }
-}
-
-/* Make board responsive and maintain aspect ratio */
-.chessground::before {
-  content: '';
-  display: block;
-  padding-bottom: 100%;
-}
-
-.chessground > cg-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-/* Ensure coordinates are always visible and properly positioned */
-.chessground coords {
-  pointer-events: none;
-  z-index: 6;
-}
-</style>
+-->

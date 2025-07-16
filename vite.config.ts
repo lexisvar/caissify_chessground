@@ -25,6 +25,8 @@ export default defineConfig({
       formats: ['es', 'umd'],
       fileName: (format) => `index.${format}.js`
     },
+    // Prevent CSS extraction for library builds
+    cssCodeSplit: false,
     rollupOptions: {
       external: ['vue', 'chessground'],
       output: {
