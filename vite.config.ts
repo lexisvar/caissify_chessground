@@ -8,7 +8,9 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true,
-      copyDtsFiles: true
+      copyDtsFiles: false,
+      rollupTypes: true,
+      bundledPackages: ['chessground']
     })
   ],
   resolve: {
