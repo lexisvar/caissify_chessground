@@ -38,7 +38,7 @@ const selectedSquare = ref<Key | null>(null)
 const getBasicDests = () => {
   const dests = new Map()
   
-  console.log('[DEBUG] MOVE_VALIDATION - Generating comprehensive destinations')
+  // Generate comprehensive destinations for all chess pieces
   
   // Helper function to check if square is valid
   const isValidSquare = (file: number, rank: number) => {
@@ -213,8 +213,7 @@ const getBasicDests = () => {
     dests.set(square, moves)
   })
   
-  console.log('[DEBUG] MOVE_VALIDATION - Comprehensive destinations generated:', dests.size, 'pieces can move')
-  console.log('[DEBUG] MOVE_VALIDATION - All piece types supported: pawns, knights, rooks, bishops, queens, kings')
+  // Comprehensive destinations generated for all piece types
   
   return dests
 }
@@ -240,7 +239,6 @@ const chessgroundConfig = computed<Config>(() => {
       dests: props.movable?.free ? undefined : getBasicDests(),
       events: {
         after: (orig, dest, metadata) => {
-          console.log('[DEBUG] Move event fired:', { orig, dest, metadata })
           // This ensures the move is properly committed
           props.onMove?.(orig, dest, metadata.captured)
           emit('move', orig, dest, metadata.captured)
@@ -271,8 +269,6 @@ const chessgroundConfig = computed<Config>(() => {
     },
     events: {
       select: (key) => {
-        console.log('[DEBUG] Select event fired:', key)
-        
         // Implement click-to-move logic
         if (selectedSquare.value && selectedSquare.value !== key) {
           // Check if this is a valid move
@@ -280,12 +276,10 @@ const chessgroundConfig = computed<Config>(() => {
           const validMoves = dests?.get(selectedSquare.value as Key)
           
           if (validMoves && validMoves.includes(key)) {
-            console.log('[DEBUG] Executing move:', selectedSquare.value, '→', key)
             // Execute the move programmatically
             if (chessground.value) {
               chessground.value.move(selectedSquare.value as Key, key)
               // Note: chessground.move() should trigger the 'after' event automatically
-              // If it doesn't, we may need to manually trigger it, but let's test first
             }
             selectedSquare.value = null
             return
@@ -297,12 +291,10 @@ const chessgroundConfig = computed<Config>(() => {
         emit('select', key)
       },
       insert: (elements) => {
-        console.log('[DEBUG] Insert event fired:', elements)
         props.onInsert?.(elements)
         emit('insert', elements)
       },
       change: () => {
-        console.log('[DEBUG] Change event fired')
         props.onChange?.()
         emit('change')
       }
@@ -371,12 +363,16 @@ defineExpose({
 </script>
 
 <style>
-/* Import chessground CSS - this provides ALL styling including coordinates */
-@import 'chessground/assets/chessground.base.css';
-@import 'chessground/assets/chessground.brown.css';
-@import 'chessground/assets/chessground.cburnett.css';
+/*
+  NOTE: Chessground CSS must be imported by the consuming application.
+  Add these imports to your main CSS file or component:
+  
+  @import 'chessground/assets/chessground.base.css';
+  @import 'chessground/assets/chessground.brown.css';
+  @import 'chessground/assets/chessground.cburnett.css';
+*/
 
-/* Match original chessground demo structure with responsive coordinate scaling */
+/* Component-specific styling - responsive coordinate scaling */
 .chessground {
   width: 100%;
   height: 100%;

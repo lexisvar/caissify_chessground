@@ -35,6 +35,27 @@ yarn add caissify_chessground
 pnpm add caissify_chessground
 ```
 
+## ⚠️ Important: CSS Requirements
+
+**You must import the chessground CSS files in your application** for the chess board to display correctly:
+
+```typescript
+// In your main.ts or main.js file
+import 'chessground/assets/chessground.base.css'
+import 'chessground/assets/chessground.brown.css'
+import 'chessground/assets/chessground.cburnett.css'
+```
+
+Or in your main CSS file:
+
+```css
+@import 'chessground/assets/chessground.base.css';
+@import 'chessground/assets/chessground.brown.css';
+@import 'chessground/assets/chessground.cburnett.css';
+```
+
+**Why is this required?** To prevent CSS conflicts and ensure the library works as a pure component without side effects, the chessground styles are not bundled with the component. This gives you full control over styling and prevents interference with your application's CSS.
+
 ## 📖 Basic Usage
 
 ### Component Usage
