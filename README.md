@@ -2,6 +2,17 @@
 
 A modern Vue 3 wrapper for [chessground](https://github.com/lichess-org/chessground) - the chess board component used by lichess.org.
 
+## 🚀 Live Demo
+
+**[Try the Interactive Demo](https://lexisvar.github.io/caissify_chessground/)** - See all features in action!
+
+The demo showcases:
+- 📱 **Responsive Design** - Different board sizes (300px, 400px, 500px)
+- 🎮 **Interactive Examples** - Programmatic moves, shapes, and FEN manipulation
+- 🎨 **Drawing Features** - Circles, arrows, and custom shapes
+- ⚡ **Advanced Features** - Animation, themes, and event handling
+- 🔄 **Real-time Updates** - Live position editing and undo functionality
+
 ## ✨ Features
 
 - 🎯 **Vue 3 + TypeScript** - Built with modern Vue 3 Composition API and full TypeScript support
@@ -11,6 +22,8 @@ A modern Vue 3 wrapper for [chessground](https://github.com/lichess-org/chessgro
 - 🎪 **Event System** - Full Vue event system integration
 - 🎭 **Composable API** - Use the `useChessground` composable for advanced usage
 - 📱 **Responsive** - Works great on mobile and desktop
+- 🎨 **Drawing Support** - Built-in support for arrows, circles, and custom shapes
+- ⚡ **Performance Optimized** - Efficient updates and memory management
 
 ## 🚀 Installation
 
@@ -143,46 +156,130 @@ The component includes default chessground CSS. You can customize the appearance
 <template>
   <ChessBoard
     :coordinates="true"
-    :movable="{ 
+    :movable="{
       free: false,
       color: 'white',
-      dests: possibleMoves 
+      dests: possibleMoves
     }"
-    :highlight="{ 
+    :highlight="{
       lastMove: true,
-      check: true 
+      check: true
     }"
     @move="makeMove"
   />
 </template>
 ```
 
-### Analysis Board
+### Analysis Board with Drawing
 
 ```vue
 <template>
   <ChessBoard
     :view-only="true"
-    :drawable="{ enabled: true }"
+    :drawable="{
+      enabled: true,
+      visible: true
+    }"
     :highlight="{ lastMove: true }"
     :fen="position"
   />
 </template>
 ```
 
-### Puzzle Board
+### Interactive Puzzle Board
 
 ```vue
 <template>
   <ChessBoard
     :orientation="puzzleOrientation"
-    :movable="{ 
+    :movable="{
       color: puzzleColor,
-      dests: validMoves 
+      dests: validMoves
     }"
+    :animation="{ enabled: true, duration: 300 }"
     @move="checkSolution"
   />
 </template>
+```
+
+### Programmatic Control
+
+```vue
+<template>
+  <ChessBoard
+    ref="board"
+    :coordinates="true"
+    @move="onMove"
+  />
+  <button @click="makeRandomMove">Random Move</button>
+  <button @click="addArrow">Add Arrow</button>
+  <button @click="resetPosition">Reset</button>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { ChessBoard } from 'caissify_chessground'
+
+const board = ref()
+
+const makeRandomMove = () => {
+  board.value.move('e2', 'e4')
+}
+
+const addArrow = () => {
+  board.value.setShapes([{
+    orig: 'e2',
+    dest: 'e4',
+    brush: 'green'
+  }])
+}
+
+const resetPosition = () => {
+  board.value.set({
+    fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+  })
+}
+</script>
+```
+
+### Responsive Board Sizes
+
+```vue
+<template>
+  <div class="board-container">
+    <!-- Mobile: 300px -->
+    <ChessBoard
+      class="mobile-board"
+      :coordinates="true"
+    />
+    
+    <!-- Desktop: 500px -->
+    <ChessBoard
+      class="desktop-board"
+      :coordinates="true"
+    />
+  </div>
+</template>
+
+<style>
+.mobile-board {
+  width: 300px;
+  height: 300px;
+}
+
+.desktop-board {
+  width: 500px;
+  height: 500px;
+}
+
+@media (max-width: 768px) {
+  .desktop-board { display: none; }
+}
+
+@media (min-width: 769px) {
+  .mobile-board { display: none; }
+}
+</style>
 ```
 
 ## 🔄 Migration from vue-chessboard
@@ -213,7 +310,7 @@ This means:
 
 ## 🐛 Issues
 
-Found a bug? Have a feature request? Please [open an issue](https://github.com/yourusername/caissify_chessground/issues).
+Found a bug? Have a feature request? Please [open an issue](https://github.com/lexisvar/caissify_chessground/issues).
 
 ## 🙏 Acknowledgments
 
