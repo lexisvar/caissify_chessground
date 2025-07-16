@@ -1,6 +1,6 @@
 {
   "name": "caissify_chessground",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vue 3 wrapper for chessground - A modern chess board component",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
